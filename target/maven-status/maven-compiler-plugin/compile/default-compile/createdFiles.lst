@@ -1,0 +1,7 @@
+Controllers/DefaultController.class
+DataPersistence/daoImpl.class
+DataPersistence/dao.class
+RestServicesControllers/restServicesControllers.class
+appConfig/AppInitializer.class
+appConfig/WebConfig.class
+LocationObject/dataPoint.class

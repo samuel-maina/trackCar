@@ -3,10 +3,13 @@
  */
 package LocationObject;
 
+import org.springframework.stereotype.Component;
+
 /**
  * @author samuel
  *
  */
+@Component
 public class dataPoint {
 long latitude;
 long longitude;

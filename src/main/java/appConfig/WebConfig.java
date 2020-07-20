@@ -7,10 +7,10 @@ import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
-
+import LocationObject.dataPoint;
 @Configuration
 @EnableWebMvc
-@ComponentScan("Controllers,RestServicesControllers")
+@ComponentScan("Controllers,RestServicesControllers,DataPersistence,LocationObject,service")
 public class WebConfig implements WebMvcConfigurer{
 	@Bean
 	//m
@@ -20,6 +20,11 @@ public class WebConfig implements WebMvcConfigurer{
 		resolver.setSuffix(".jsp");
 		resolver.setExposeContextBeansAsAttributes(true);
 		return resolver;
+	}
+		@Bean
+		public dataPoint datapoint() {
+			dataPoint dp=new dataPoint();
+		return dp;
 		
 	}
 

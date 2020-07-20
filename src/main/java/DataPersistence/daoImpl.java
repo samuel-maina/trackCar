@@ -3,26 +3,29 @@
  */
 package DataPersistence;
 
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import javax.sql.DataSource;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.LogManager;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
 import LocationObject.dataPoint;
 
 /**
  * @author samuel
- *
  */
+@Component
+@Repository
 public class daoImpl implements dao{
 
 	public void insertData(long latitude, long longitude, long time, String deviceId, long accuracy, long direction,
@@ -33,7 +36,7 @@ public class daoImpl implements dao{
 		PreparedStatement ps=null;
 		
 		try {
-			Properties props=new Properties();
+			/*Properties props=new Properties();
 			//reading an external file on relative to root {/} location
 			FileReader fReader =new FileReader("/home/samuel/propfiles/jdbcSettings.properties");
 			props.load(fReader);
@@ -42,7 +45,11 @@ public class daoImpl implements dao{
 			String dbUserName=props.getProperty("db.username");
 			String dbPassword=props.getProperty("db.password");
 			Class.forName(dbDriverClass);
-			conn=DriverManager.getConnection(dbUrl,dbUserName,dbPassword);
+			conn=DriverManager.getConnection(dbUrl,dbUserName,dbPassword);*/
+			Context InitContext=new InitialContext();
+			Context envContext=(Context) InitContext.lookup("java:comp/env");
+			DataSource dataSource=(DataSource)envContext.lookup("jdbc/UserDB");
+			conn=dataSource.getConnection();
 			ps=conn.prepareStatement("insert into data values(?,?,?,?,?,?,?,?) ");
 			ps.setFloat(1,latitude);
 			ps.setFloat(2,longitude);
@@ -53,7 +60,7 @@ public class daoImpl implements dao{
 			ps.setFloat(7,speed);
 			ps.setFloat(8,altitude);
 			ps.execute();
-		}catch(SQLException | IOException | ClassNotFoundException ex) {
+		}catch(SQLException | NamingException ex) {
 			logger.error(ex);
 		}finally {
 			try {
@@ -81,36 +88,46 @@ public class daoImpl implements dao{
 		ResultSet rs= null;
 		List<dataPoint>DeviceDataPoints =new ArrayList<>();
 		try {
-			Properties props=new Properties();
+			/*Properties props=new Properties();
 			//reading an external file on relative to root {/} location
 			FileReader fReader =new FileReader("/home/samuel/propfiles/jdbcSettings.properties");
-			props.load(fReader);
+			/props.load(fReader);
 			String dbDriverClass=props.getProperty("db.driver.class");
 			String dbUrl=props.getProperty("db.conn.url");
 			String dbUserName=props.getProperty("db.username");
 			String dbPassword=props.getProperty("db.password");
 			Class.forName(dbDriverClass);
-			conn=DriverManager.getConnection(dbUrl,dbUserName,dbPassword);
+			conn=DriverManager.getConnection(dbUrl,dbUserName,dbPassword);*/
+			Context InitContext=new InitialContext();
+			Context envContext=(Context) InitContext.lookup("java:comp/env");
+			DataSource dataSource=(DataSource)envContext.lookup("jdbc/UserDB");
+			conn=dataSource.getConnection();
 			ps=conn.prepareStatement("select * from data where id=?");
 			ps.setString(1,deviceId);
 			rs=ps.executeQuery();
 			while(rs.next()) {
-				dataPoint DataPoint= new dataPoint();
-				DataPoint.setLatitude(rs.getLong("lat"));
-				DataPoint.setLongitude(rs.getLong("longitude"));
-				DataPoint.setAltitude(rs.getLong("altitude"));
-				DataPoint.setDeviceId(rs.getString("id"));
-				DataPoint.setSpeed(rs.getLong("speed"));
-				DataPoint.setDirection(rs.getLong("direction"));
-				DataPoint.setTime(rs.getLong("time"));
-				DataPoint.setAccuracy(rs.getLong("accuracy"));
-				DeviceDataPoints.add(DataPoint);
+				dataPoint dp= new dataPoint();
+				dp.setLatitude(rs.getLong("lat"));
+				dp.setLongitude(rs.getLong("longitude"));
+				dp.setAltitude(rs.getLong("altitude"));
+				dp.setDeviceId(rs.getString("id"));
+				dp.setSpeed(rs.getLong("speed"));
+				dp.setDirection(rs.getLong("direction"));
+				dp.setTime(rs.getLong("time"));
+				dp.setAccuracy(rs.getLong("accuracy"));
+				DeviceDataPoints.add(dp);
 			}
 			
-		}catch(SQLException |ClassNotFoundException | IOException ex) {
+		}catch(SQLException |NamingException ex) {
 			logger.error(daoImpl.class.getName(),ex);
-		}
+		}finally {try {
+			if(rs!=null) {rs.close();}
+			if(ps!=null) {ps.close();}
+			if(conn!=null) {conn.close();}
+			}catch(SQLException ex) {
+				logger.error(daoImpl.class.getName(),ex);
+			}}
+		
 		return DeviceDataPoints;
 	}
-
 }
