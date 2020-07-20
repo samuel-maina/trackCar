@@ -25,7 +25,7 @@ import LocationObject.dataPoint;
  * @author samuel
  */
 @Component
-@Repository
+
 public class daoImpl implements dao{
 
 	public void insertData(long latitude, long longitude, long time, String deviceId, long accuracy, long direction,

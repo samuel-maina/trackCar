@@ -18,11 +18,11 @@ public class ServiceImpl {
 
 @Autowired
 private daoImpl daoimpl;
-@Transactional
+
 public List<dataPoint>getDevicedata(String deviceId){
 	return  daoimpl.getDataPointById(deviceId);
 }
-@Transactional
+
 public void insertDataPoints(long latitude,long longitude,long time,String deviceId,long accuracy,long direction,long speed,long altitude) {
 	final org.apache.log4j.Logger logger=LogManager.getLogger(restServicesControllers.class);
 	BasicConfigurator.configure();
