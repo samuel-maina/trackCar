@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import service.ServiceImpl;
 
 @Controller
-//@RequestMapping(value="/")
+
 public class DefaultController {
 	@Autowired
 	private ServiceImpl serviceImpl;
